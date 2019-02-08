@@ -73,12 +73,3 @@ services:
       - "${REDIS_PORT}:6379"
     networks:
       - backend
-
-  # NODE ######################################################################
-  node:
-    build: ./node
-    volumes:
-      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
-    networks:
-      - backend
-      - frontend
