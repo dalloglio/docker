@@ -1,5 +1,5 @@
 .idea
-/logs/**/.log
+/logs/**/*.log
 /data
 .env
 /nginx/ssl/*.crt
