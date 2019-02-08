@@ -1,10 +1,12 @@
 version: "3"
 
 networks:
-  frontend:
+  eqi:
     driver: ${NETWORKS_DRIVER}
-  backend:
-    driver: ${NETWORKS_DRIVER}
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24
 
 volumes:
   redis:
@@ -22,11 +24,13 @@ services:
         - PUID=${WORKSPACE_PUID}
         - PGID=${WORKSPACE_PGID}
         - TZ=${WORKSPACE_TIMEZONE}
+    extra_hosts:
+      - "api.comparador.test:172.20.0.4"
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
     networks:
-      - frontend
-      - backend
+      eqi:
+        ipv4_address: 172.20.0.2
 
   # PHP-FPM ###################################################################
   php-fpm:
@@ -41,7 +45,8 @@ services:
     depends_on:
       - workspace
     networks:
-      - backend
+      eqi:
+        ipv4_address: 172.20.0.3
 
   # NGINX SERVER ##############################################################
   nginx:
@@ -61,8 +66,8 @@ services:
     depends_on:
       - php-fpm
     networks:
-      - frontend
-      - backend
+      eqi:
+        ipv4_address: 172.20.0.4
 
   # REDIS #####################################################################
   redis:
@@ -72,4 +77,5 @@ services:
     ports:
       - "${REDIS_PORT}:6379"
     networks:
-      - backend
+      eqi:
+        ipv4_address: 172.20.0.5
